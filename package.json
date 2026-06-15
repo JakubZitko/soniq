@@ -1,0 +1,59 @@
+{
+  "name": "@jakubzitko/soniq",
+  "version": "0.1.0",
+  "description": "Procedural UI sounds for the web. No audio files. No licenses. Just Web Audio API.",
+  "type": "module",
+  "main": "./dist/soniq.cjs",
+  "module": "./dist/soniq.mjs",
+  "unpkg": "./dist/soniq.iife.js",
+  "jsdelivr": "./dist/soniq.iife.js",
+  "types": "./src/soniq.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/soniq.d.ts",
+      "import": "./dist/soniq.mjs",
+      "require": "./dist/soniq.cjs",
+      "default": "./dist/soniq.mjs"
+    },
+    "./src/soniq.js": {
+      "types": "./src/soniq.d.ts",
+      "default": "./src/soniq.js"
+    }
+  },
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "lint": "node --check src/soniq.js && node --check tests/soniq.test.js",
+    "test": "node --test",
+    "demo": "python3 -m http.server 8080 --directory demo",
+    "prepublishOnly": "npm run lint && npm test && npm run build"
+  },
+  "keywords": [
+    "audio",
+    "ui",
+    "sound",
+    "sound-effects",
+    "web-audio-api",
+    "procedural",
+    "micro-interactions",
+    "accessibility"
+  ],
+  "author": "JakubZitko",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JakubZitko/soniq.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JakubZitko/soniq/issues"
+  },
+  "homepage": "https://github.com/JakubZitko/soniq#readme",
+  "devDependencies": {
+    "esbuild": "^0.21.5"
+  }
+}

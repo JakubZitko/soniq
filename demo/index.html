@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soniq — Procedural UI Sounds</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Source+Sans+3:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: oklch(14% 0.02 260);
+      --surface: oklch(20% 0.03 260);
+      --surface-2: oklch(26% 0.04 260);
+      --surface-3: oklch(32% 0.05 260);
+      --text: oklch(94% 0.01 90);
+      --text-muted: oklch(68% 0.03 80);
+      --text-dim: oklch(48% 0.04 260);
+      --accent: oklch(72% 0.16 170);
+      --accent-dim: oklch(58% 0.12 170);
+      --accent-glow: oklch(72% 0.16 170 / 0.25);
+      --line: oklch(30% 0.04 260);
+      --radius: 10px;
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --font-display: 'Bricolage Grotesque', sans-serif;
+      --font-body: 'Source Sans 3', sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      font-weight: 350;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      margin: 0;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    p { margin: 0; }
+    a { color: var(--accent); text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--space-xl);
+    }
+
+    header {
+      padding: var(--space-2xl) 0 var(--space-xl);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: var(--space-xl);
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: 999px;
+      margin-bottom: var(--space-md);
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      margin-bottom: var(--space-sm);
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.125rem;
+      max-width: 55ch;
+    }
+
+    .controls {
+      display: flex;
+      gap: var(--space-lg);
+      align-items: center;
+      padding: var(--space-md);
+      background: var(--surface);
+      border-radius: var(--radius);
+      margin-bottom: var(--space-xl);
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    input[type="range"] {
+      accent-color: var(--accent);
+      width: 140px;
+    }
+
+    .section {
+      margin-bottom: var(--space-2xl);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-sm);
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      margin-bottom: var(--space-lg);
+      max-width: 60ch;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .sound-btn {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: var(--space-lg);
+      color: var(--text);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xs);
+    }
+
+    .sound-btn:hover {
+      border-color: var(--accent-dim);
+      background: var(--surface-2);
+      transform: translateY(-2px);
+    }
+
+    .sound-btn:active {
+      transform: translateY(0);
+    }
+
+    .sound-btn small {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    .playground {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: var(--space-xl);
+      display: grid;
+      gap: var(--space-lg);
+    }
+
+    .demo-row {
+      display: flex;
+      gap: var(--space-md);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .demo-input {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: var(--space-sm) var(--space-md);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      min-width: 260px;
+    }
+
+    .demo-input:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .demo-btn {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--radius);
+      padding: var(--space-sm) var(--space-lg);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      transition: all 0.2s ease;
+    }
+
+    .demo-btn:hover {
+      background: oklch(78% 0.16 170);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .demo-btn.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .demo-btn.secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--surface-2);
+    }
+
+    .toggle {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      background: var(--surface-2);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      border: 1px solid var(--line);
+    }
+
+    .toggle.active {
+      background: var(--accent);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 22px;
+      height: 22px;
+      background: var(--text);
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+    }
+
+    .toggle.active::after {
+      transform: translateX(24px);
+      background: var(--bg);
+    }
+
+    .code-block {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: var(--space-md);
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.875rem;
+      color: var(--text);
+      white-space: pre;
+    }
+
+    .token-k { color: oklch(72% 0.16 170); }
+    .token-s { color: oklch(68% 0.08 30); }
+    .token-c { color: var(--text-muted); }
+    .token-f { color: oklch(75% 0.12 260); }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: var(--space-xl) 0;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">v0.1.0 — Zero dependencies</span>
+      <h1>Soniq</h1>
+      <p class="subtitle">Procedural UI sounds generated in the browser. No audio files, no licenses, no heavy packs. Just a tiny Web Audio API wrapper for clicks, hovers, toggles, notifications, and more.</p>
+    </header>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="volume">Volume</label>
+        <input type="range" id="volume" min="0" max="100" value="50">
+        <span id="volumeValue">50%</span>
+      </div>
+      <div class="control-group">
+        <span>Click any button below to initialize audio</span>
+      </div>
+    </div>
+
+    <section class="section">
+      <h2 class="section-title">Sound Presets</h2>
+      <p class="section-desc">Each sound is synthesized on demand. Hover and click to hear how it behaves in context.</p>
+      <div class="grid" id="presetGrid"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Live Playground</h2>
+      <p class="section-desc">These components use Soniq to provide audio feedback as you interact with them.</p>
+
+      <div class="playground">
+        <div class="demo-row">
+          <button class="demo-btn" id="primaryBtn">Primary action</button>
+          <button class="demo-btn secondary" id="secondaryBtn">Secondary action</button>
+        </div>
+
+        <div class="demo-row">
+          <input type="text" class="demo-input" id="typeInput" placeholder="Type something…" autocomplete="off">
+          <span style="color: var(--text-muted); font-size: 0.875rem;">Each keystroke emits a tiny mechanical tick.</span>
+        </div>
+
+        <div class="demo-row">
+          <div class="toggle" id="demoToggle" role="switch" aria-checked="false"></div>
+          <span style="color: var(--text-muted); font-size: 0.875rem;">Toggle switch</span>
+        </div>
+
+        <div class="demo-row">
+          <button class="demo-btn secondary" id="notifyBtn">Send notification</button>
+          <button class="demo-btn secondary" id="successBtn">Mark success</button>
+          <button class="demo-btn secondary" id="errorBtn">Trigger error</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Usage</h2>
+      <p class="section-desc">Import the presets you need and attach them to events.</p>
+      <div class="code-block">
+        <code id="codeExample"></code>
+      </div>
+    </section>
+
+    <footer>
+      <span>Built because sound design shouldn’t require a DAW.</span>
+      <span><a href="https://github.com">View on GitHub</a></span>
+    </footer>
+  </div>
+
+  <script type="module">
+    import {
+      setVolume,
+      click,
+      hover,
+      toggle,
+      notification,
+      success,
+      error,
+      type,
+      swipe,
+      pop
+    } from '../src/soniq.js';
+
+    // Volume control
+    const volumeSlider = document.getElementById('volume');
+    const volumeValue = document.getElementById('volumeValue');
+    volumeSlider.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      setVolume(val / 100);
+      volumeValue.textContent = `${val}%`;
+    });
+
+    // Preset grid
+    const presets = [
+      { name: 'click', fn: () => click(), desc: 'Button press' },
+      { name: 'hover', fn: () => hover(), desc: 'Cursor landing' },
+      { name: 'toggle', fn: () => toggle(true), desc: 'Switch on' },
+      { name: 'notification', fn: () => notification(), desc: 'Alert chime' },
+      { name: 'success', fn: () => success(), desc: 'Confirmation' },
+      { name: 'error', fn: () => error(), desc: 'Failure buzz' },
+      { name: 'type', fn: () => type(), desc: 'Keystroke' },
+      { name: 'swipe', fn: () => swipe(), desc: 'Gesture' },
+      { name: 'pop', fn: () => pop(), desc: 'Soft bubble' }
+    ];
+
+    const grid = document.getElementById('presetGrid');
+    presets.forEach(({ name, fn, desc }) => {
+      const btn = document.createElement('button');
+      btn.className = 'sound-btn';
+      btn.innerHTML = `<span>${name}</span><small>${desc}</small>`;
+      btn.addEventListener('mouseenter', () => hover());
+      btn.addEventListener('click', () => {
+        click();
+        fn();
+      });
+      grid.appendChild(btn);
+    });
+
+    // Playground
+    const primaryBtn = document.getElementById('primaryBtn');
+    primaryBtn.addEventListener('mouseenter', () => hover());
+    primaryBtn.addEventListener('click', () => {
+      click();
+      success();
+    });
+
+    const secondaryBtn = document.getElementById('secondaryBtn');
+    secondaryBtn.addEventListener('mouseenter', () => hover({ subtle: true }));
+    secondaryBtn.addEventListener('click', () => click({ subtle: true }));
+
+    const typeInput = document.getElementById('typeInput');
+    typeInput.addEventListener('input', () => type());
+    typeInput.addEventListener('focus', () => hover());
+
+    const demoToggle = document.getElementById('demoToggle');
+    demoToggle.addEventListener('click', () => {
+      const active = demoToggle.classList.toggle('active');
+      demoToggle.setAttribute('aria-checked', active);
+      toggle(active);
+    });
+
+    document.getElementById('notifyBtn').addEventListener('click', () => {
+      click();
+      notification();
+    });
+
+    document.getElementById('successBtn').addEventListener('click', () => {
+      click();
+      success();
+    });
+
+    document.getElementById('errorBtn').addEventListener('click', () => {
+      click();
+      error();
+    });
+
+    // Code example
+    document.getElementById('codeExample').innerHTML = `<span class="token-k">import</span> { click, hover, success } <span class="token-k">from</span> <span class="token-s">'soniq'</span>;
+
+<span class="token-c">// Add sonic feedback to any element</span>
+button.<span class="token-f">addEventListener</span>(<span class="token-s">'mouseenter'</span>, () => <span class="token-f">hover</span>());
+button.<span class="token-f">addEventListener</span>(<span class="token-s">'click'</span>, () => {
+  <span class="token-f">click</span>();
+  <span class="token-f">success</span>();
+});`;
+  </script>
+</body>
+</html>
